@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <Windows.h>
 
 void initTree(RBTree* tree) {
 	tree->root = NULL;
@@ -21,17 +22,23 @@ void freeTree(RBTree* tree) {
 	tree->root = NULL;
 }
 
-static void printTreeCore(Node* node) {
+static void printTreeCore(Node* node, int depth) {
 	if (node == NULL) {
 		return;
 	}
-	printf("%d ", node->data);
-	printTreeCore(node->left);
-	printTreeCore(node->right);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0);
+	for (int i = 0; i < depth; i++) {
+		printf("  ");
+	}
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0x000f | (node->color == 'r' ? 0x0040 : 0));
+	printf("%d\n", node->data);
+	printTreeCore(node->left, depth + 1);
+	printTreeCore(node->right, depth + 1);
 }
 
 void printTree(RBTree tree) {
-	printTreeCore(tree.root);
+	printTreeCore(tree.root, 0);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0x000f);
 }
 
 static void leftRotation(RBTree* tree, Node* node) {
